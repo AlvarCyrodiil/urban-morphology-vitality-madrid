@@ -1,0 +1,83 @@
+# --- Heavy data: never commit ---
+# Cadastre and heights (hundreds of MB / GB)
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+*.sbn
+*.sbx
+*.qix
+!**/SOURCES.md
+
+# Cadastre INSPIRE
+*.gml
+*.gfs
+
+# Network graphs and OSMnx caches
+*.graphml
+cache/
+osmnx_cache/
+**/cache/
+
+# Premises census and municipal register (downloadable, hundreds of MB)
+**/200085-*.csv
+**/209548-*.csv
+**/209163-*.csv
+**/padron_enero_*.csv
+**/callejero_direcciones.csv
+**/aforos_peatones_*.csv
+**/C2021_Indicadores.csv
+**/31097.csv
+
+# Inside Airbnb: not redistributable (see data/raw/SOURCES.md)
+**/airbnb_madrid_listings.csv
+**/listings*.csv*
+
+# Trained models / deep learning (abandoned branch)
+*.h5
+*.pt
+*.pth
+*.pkl
+
+# --- Temporary files ---
+# Word
+~$*
+*.tmp
+*.bak
+*.BACKUP.*
+
+# Jupyter
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+madrid_dl_env/
+
+# System
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Regenerable outputs
+run/
+outputs/
+imagenes/
+*.log
+
+# Thesis text: withheld until after the defence
+docs/*.pdf
+docs/*.docx
+
+# Archives
+*.zip
+*.gz
+*.7z
+*.rar
