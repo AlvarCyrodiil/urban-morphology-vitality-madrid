@@ -6,8 +6,8 @@ published figures. ~3 min, no downloads.
 1. asoc_km2 and cv_pob - the two vitality dimensions that existed only inside
    madrid_vitalidad_h3_master_v5.csv, which no notebook writes.
 2. Spatial block validation (0.826 by neighbourhood, 0.822 by 1 km block).
-3. Common support region of Figure 7.1.
-4. Section 7.5 correlations, tourism-controlled estimates, Table 7.1.
+3. Common support region of the common-support figure.
+4. Tourism correlations, tourism-controlled estimates, covariate-balance table.
 """
 import re
 import sys
@@ -92,9 +92,9 @@ check("cv_pob vs stored (Pearson r)", float(np.corrcoef(c.cv_pob, c.cv_rebuilt)[
       1.0, 0.001, "{:8.5f}")
 print(f"        identical hexagons: {np.isclose(c.cv_pob, c.cv_rebuilt).mean():.1%}   n={len(c)}")
 
-# ---------------------------------------------------------------- 2. chapter 7 rebuilt
+# ------------------------------------------------------- 2. results chapter rebuilt
 print("\n" + "=" * 70)
-print(" 2. CHAPTER 7 USING THE REBUILT COLUMNS")
+print(" 2. RESULTS CHAPTER USING THE REBUILT COLUMNS")
 print("=" * 70 + "\n")
 
 rebuilt = assoc_hex[["hex_id", "asoc_rebuilt"]].merge(cv_hex, on="hex_id", how="outer")
@@ -104,7 +104,7 @@ for outcome, treatment, name, want_ols, want_att in [
         ("vitality", "tipologia_rf", "total (RF)", 9.8, 6.0),
         ("vit_commercial", "tipologia_rf", "commercial", 6.1, 4.4),
         ("vit_demographic", "tipologia_rf", "demographic", 14.3, 8.1),
-        ("vitality", "tipologia_idx", "total (unsupervised)", -2.4, -3.4)]:
+        ("vitality", "tipologia_idx", "total (unsupervised)", -1.8, -3.5)]:
     ols, _, att, _, n, sample = effect(m, outcome, treatment)
     check(f"{name} - OLS", ols, want_ols, 0.6, "{:+7.1f}%")
     check(f"{name} - matched ({n} pairs)", att, want_att, 0.6, "{:+7.1f}%")
@@ -136,7 +136,7 @@ print(f"        spread: neighbourhoods +-{sd_b:.3f}, blocks +-{sd_k:.3f}")
 
 # ---------------------------------------------------------------- 4. support and tourism
 print("\n" + "=" * 70)
-print(" 4. COMMON SUPPORT (Figure 7.1) AND TOURISM (7.5)")
+print(" 4. COMMON SUPPORT AND TOURISM")
 print("=" * 70 + "\n")
 
 *_, sample = effect(m, "vitality", "tipologia_rf")
@@ -152,12 +152,12 @@ print(f"        off support: {int(((treated < lo) | (treated > hi)).sum())} spon
 for v, want in zip(CTRL, [0.30, 0.38, 0.55, 0.33]):
     t, c_ = sample.loc[sample.esp == 1, v], sample.loc[sample.esp == 0, v]
     smd = abs(t.mean() - c_.mean()) / np.sqrt((t.std() ** 2 + c_.std() ** 2) / 2)
-    check(f"Table 7.1 SMD before - {v}", smd, want, 0.015, "{:8.2f}")
+    check(f"balance SMD before - {v}", smd, want, 0.015, "{:8.2f}")
 
 print()
 for col, want in [("vitality", 0.71), ("vit_commercial", 0.74), ("vit_demographic", 0.45),
                   ("dim5", 0.03), ("dim6", -0.15)]:
-    check(f"7.5 r({col}, log_airbnb)", float(m[[col, "log_airbnb"]].corr().iloc[0, 1]),
+    check(f"r({col}, log_airbnb)", float(m[[col, "log_airbnb"]].corr().iloc[0, 1]),
           want, 0.012, "{:+8.2f}")
 
 print()
@@ -165,7 +165,7 @@ for col, name, want in [("vit_commercial", "commercial", 1.4), ("dim8", "leisure
                         ("vit_demographic", "demographic", 6.7), ("dim1", "land-use mix (dim1)", 5.1),
                         ("dim2", "amenities (dim2)", -3.2), ("vitality", "total", 3.8)]:
     _, _, att, *_ = effect(m, col, "tipologia_rf", CTRL + ["log_airbnb"])
-    check(f"7.5 tourism-controlled, matched - {name}", att, want, 0.45, "{:+7.1f}%")
+    check(f"tourism-controlled, matched - {name}", att, want, 0.45, "{:+7.1f}%")
 
 print("\n" + "=" * 70)
 print("  ALL LOST STEPS REBUILT" if all_passed() else "  MISMATCH - see above")

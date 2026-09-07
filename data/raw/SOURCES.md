@@ -78,5 +78,5 @@ Step 06 expects a `madrid_drive.graphml` that lived outside the project and is n
 
 ### INE household income atlas
 
-Mean income per person by census section (`log_renta`, a chapter 7 control).
+Mean income per person by census section (`log_renta`, a control in the results chapter).
 <https://www.ine.es/experimental/atlas/experimental_atlas.htm>

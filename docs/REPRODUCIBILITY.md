@@ -12,7 +12,7 @@ all passing); the fifth is partly closed.
 | 1 | `asoc_km2`, `cv_pob` (vitality dimensions 4 and 5) | rebuilt — r = 0.999 and r = 1.000 |
 | 2 | Spatial block validation (0.826 / 0.822) | rebuilt — 0.829 and 0.821 |
 | 3 | Common support region (Figure 7.1) | rebuilt — exact |
-| 4 | §7.5 correlations and estimates, Table 7.1 | rebuilt — 15/15 exact |
+| 4 | §8.4 correlations and estimates, balance table | rebuilt — 15/15 exact |
 | 5 | External drive graph for centrality | partial — regenerated at r = 0.945 |
 
 ## 1. The two lost vitality columns
@@ -46,7 +46,7 @@ and divided by its area.
 > differently.
 
 **The test that matters.** Substituting dimensions 4 and 5 with the rebuilt columns and rerunning
-chapter 7:
+the results chapter:
 
 | Result | Rebuilt | Published |
 |---|---|---|
@@ -54,7 +54,7 @@ chapter 7:
 | Total (RF) — matched, 144 pairs | +6.0 % | +6.0 % |
 | Commercial — OLS / matched | +6.1 % / +4.4 % | +6.1 % / +4.4 % |
 | Demographic — OLS / matched | +14.3 % / +8.0 % | +14.3 % / +8.1 % |
-| Unsupervised index — matched, 185 pairs | −3.4 % | −3.4 % |
+| Unsupervised index — matched, 188 pairs | −3.5 % | −3.5 % |
 
 Pair counts match exactly. Part II is reproducible from raw data.
 
@@ -96,18 +96,18 @@ Regularisation matters here: unpenalised fits (`statsmodels.Logit`, or `penalty=
 [0.026, 0.531]. The 2/20 count is the same under every variant, so the reading of the figure does
 not depend on it.
 
-## 4. Tourism (§7.5) and Table 7.1
+## 4. Tourism (§8.4) and the balance table
 
 **Table 7.1, "SMD before"** — imbalance before matching on the RF analytic sample (216 spontaneous,
 819 planned): `log_renta` 0.30, `log_densidad` 0.38, `dist_centro_km` 0.55, `log_bc_mean` 0.33.
 All four exact.
 
-**§7.5 correlations with `log_airbnb`** — over all 2,991 hexagons, not the analytic sample (which
+**Tourism correlations with `log_airbnb`** — over all 2,991 hexagons, not the analytic sample (which
 gives markedly lower values): index +0.71, commercial +0.74, demographic +0.45, turnover +0.03,
 age −0.15. All five exact.
 
-**§7.5 with tourism in the controls** — the six published figures are the **matched** estimates,
-not OLS. The thesis does not say so in §7.4–7.5 and should.
+**With tourism in the controls** — the six published figures are the **matched** estimates,
+not OLS. The manuscript now states this in the caption of the components table.
 
 | Series | Matched | Published | OLS equivalent |
 |---|---|---|---|
@@ -129,7 +129,8 @@ Downloading Madrid's drive network today (31,560 nodes, 61,980 edges) and repeat
 computation gives `log_bc_mean` at **Pearson r = 0.945** against the stored file — so the stored
 file is a legitimate betweenness of Madrid's street network, just not recoverable byte for byte.
 
-Substituting the regenerated control and rerunning chapter 7:
+Substituting the regenerated control and rerunning the results chapter (the unsupervised row of
+this table was computed before the duplicate correction above and is indicative):
 
 | Result | Regenerated | Published |
 |---|---|---|
@@ -137,7 +138,7 @@ Substituting the regenerated control and rerunning chapter 7:
 | Total (RF) — matched | +7.0 % (p < 0.001) | +6.0 % |
 | Commercial — matched | +3.7 % (p = 0.073) | +4.4 % (p = 0.036) |
 | Demographic — matched | +11.2 % (p < 0.001) | +8.1 % |
-| Unsupervised index — matched | −1.9 % (p = 0.159) | −3.4 % (p = 0.022) |
+| Unsupervised index — matched | −1.9 % (p = 0.159) | −3.5 % (p = 0.020) |
 
 ### This is estimator fragility, not an error
 
@@ -150,9 +151,9 @@ To separate "the graph changed" from "the matched estimator is unstable", the **
 | Total (RF) | +9.8 % ± 0.05 | +7.4 % ± 0.86, range [+5.9, +8.9] | +6.0 % |
 | Commercial | +6.1 % ± 0.06 | +4.3 % ± 1.05, range [+2.3, +6.5] | +4.4 % |
 | Demographic | +14.3 % ± 0.04 | +11.3 % ± 1.42, range [+9.0, +14.8] | +8.1 % |
-| Unsupervised index | −2.4 % ± 0.04 | −2.5 % ± 0.71, range [−3.7, −1.2] | −3.4 % |
+| Unsupervised index | −1.8 % ± 0.03 | −2.3 % ± 0.71, range [−3.6, −1.1] | −3.5 % |
 
-1. **OLS is robust** (±0.05 points): +9.8 %, +6.1 %, +14.3 % and −2.4 % do not depend on the exact
+1. **OLS is robust** (±0.05 points): +9.8 %, +6.1 %, +14.3 % and −1.8 % do not depend on the exact
    centrality values.
 2. **1:1 matching without replacement is intrinsically unstable** (±0.7 to ±1.4 points). It is a
    greedy algorithm that discards controls in distance order, so a small perturbation in one
@@ -195,6 +196,14 @@ branches.
 `R4_all` ≡ `grid_crystallinity_all` and `R4_major` ≡ `grid_crystallinity_major` (both predictors),
 plus `area_km2` ≡ `cell_km2` (neither is a predictor). So 42 variables, 40 distinct.
 
+The Random Forest is indifferent to this, but the **unsupervised index was not**: it is an
+unweighted mean of signed z-scores, so the two duplicated columns entered it twice and `R4_all`
+and `R4_major` carried double weight — the equal weighting was not even uniform. They are now
+excluded from `SIGN` in step 05, which leaves 27 signed variables and moves the index figures to
+AUC **0.772**, F1-macro 0.632, agreement **80 %**, and the causal estimates to **−1.8 %** by OLS
+(no longer significant) and **−3.5 %** matched over 188 pairs. 44 of 1,654 urban cells change
+label; the old and new indices correlate at r = 0.992.
+
 ## Anchor verification
 
 | Anchor | Expected | Found |
@@ -207,4 +216,4 @@ plus `area_km2` ≡ `cell_km2` (neither is a predictor). So 42 variables, 40 dis
 | OLS | +9.8 % | +9.8 % |
 | Matched | +6.0 %, 144 pairs | +6.0 %, 144 pairs |
 | Commercial / demographic | +4.4 % / +8.1 % | +4.4 % / +8.1 % |
-| Unsupervised index | −3.4 % | −3.4 % |
+| Unsupervised index | −3.5 % | −3.5 % |

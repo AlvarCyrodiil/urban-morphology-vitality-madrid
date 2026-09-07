@@ -1,6 +1,6 @@
-# Urban morphology and neighbourhood vitality in Madrid
+# Urban form and neighbourhood vitality in Madrid
 
-Code and data for the master's thesis *Urban morphology and neighbourhood vitality*
+Code and data for the master's thesis *Urban Form and Neighbourhood Vitality in Madrid*
 (QuEA 2025–26). The thesis text is not included here while it is unpublished; it will be added
 after the defence.
 
@@ -16,16 +16,20 @@ variable used to classify morphology enters the vitality index or its controls.
 |---|---|---|
 | Random Forest F1-macro (5-fold CV, 42 variables) | **0.847 ± 0.021** | `05` |
 | Held out by neighbourhood / by 1 km block | 0.826 / **0.822** | `reconstruct.py` |
-| AUC of the unsupervised index | 0.766 | `05` |
-| Agreement between the two instruments | 79 % | `05` |
+| AUC of the unsupervised index | 0.772 | `05` |
+| Agreement between the two instruments | 80 % | `05` |
 | Effect on vitality — OLS with controls | **+9.8 %** (p < 0.0001) | `09` |
 | Effect on vitality — matched | **+6.0 %** (p = 0.0005, 144 pairs) | `09` |
 | Commercial block — matched | +4.4 % (p = 0.036) | `09` |
 | Demographic block — matched | +8.1 % (p = 0.003) | `09` |
-| Same test, unsupervised index — matched | **−3.4 %** (p = 0.022, 185 pairs) | `09` |
+| Same test, unsupervised index — matched | −3.5 % (p = 0.020, 188 pairs) | `09` |
 
-The last row is the thesis's central result: the sign of the effect reverses depending on how
-spontaneity is operationalised.
+The last row is a robustness check, not a co-equal result. The unsupervised index recovers only
+72 of the 209 anchored spontaneous cells and reaches AUC 0.772 against the classifier's
+cross-validated AUC of 0.948, so its treated class is a small and non-random subset of the fabric
+it is meant to identify, and measurement error of that size leaves its causal estimate close to
+uninterpretable. Its OLS counterpart, −1.8 %, is not significant. The thesis reports the negative
+estimate as a bound on what the evidence carries, not as an alternative answer.
 
 ## Quick check
 
@@ -79,7 +83,8 @@ reassembly. The file ships, so step 04 is fast unless deleted.
 | 08 | `08_vitality_indicators.ipynb` | premises census, master v5 | `vitalidad_ocio_hex.csv` |
 | 09 | `09_chapter7_results.ipynb` | the five files below | *prints and plots only* |
 
-Step 09 produces the whole of chapter 7 and reads exactly:
+Step 09 produces the whole of the results chapter — chapter 8 of the final manuscript; the file
+name records the numbering of an earlier draft — and reads exactly:
 
 ```
 madrid_morfologia_h3_v10.gpkg
@@ -97,10 +102,10 @@ Step 05 (console output is in Spanish, as in the original):
 
 ```
 Hexágonos: 2887 · urbanos: 1654 · etiquetados: 733
-AUC del índice (sin umbral): 0.766
+AUC del índice (sin umbral): 0.772
 RF CV F1-macro: 0.847 ± 0.021  (42 variables)
 Tipología RF (urbano): {'Espontáneo': 237, 'Transición': 133, 'Planificado': 1284}
-Acuerdo índice vs RF: 79%
+Acuerdo índice vs RF: 80%
 ```
 
 Ablation table from step 04:
@@ -114,7 +119,7 @@ Ablation table from step 04:
 | all | 42 | 0.847 ± 0.021 |
 
 Step 09 with `tipologia_rf`: OLS +9.8 %, matched +6.0 % over 144 pairs; commercial +4.4 %,
-demographic +8.1 %. With `tipologia_idx`: matched −3.4 % over 185 pairs. Post-matching balance
+demographic +8.1 %. With `tipologia_idx`: matched −3.5 % over 188 pairs. Post-matching balance
 below 0.10 on all four covariates.
 
 ## Vitality index
@@ -132,7 +137,7 @@ index is the unweighted mean of six dimensions.
 | Demographic | `dim6` youth | `pct_menores16`, `pct_16a64` |
 
 Controls: `log_renta`, `log_densidad`, `dist_centro_km`, `log_bc_mean`. Tourism (`log_airbnb`)
-enters only in §7.5 and §7.7.
+enters only in §8.4 and §8.5 of the manuscript.
 
 ## Lost steps
 
@@ -142,10 +147,10 @@ Four are rebuilt and verified by `reconstruct.py`; details in
 
 | # | What was missing | Fidelity |
 |---|---|---|
-| 1 | `asoc_km2` and `cv_pob` (dimensions 4 and 5) — they existed only inside `madrid_vitalidad_h3_master_v5.csv`, which no notebook writes | `cv_pob` **r = 1.000** (100 % identical); `asoc_km2` **r = 0.999** (99.3 %). Chapter 7 recomputed with them gives the same figures and the same 144 and 185 pairs |
+| 1 | `asoc_km2` and `cv_pob` (dimensions 4 and 5) — they existed only inside `madrid_vitalidad_h3_master_v5.csv`, which no notebook writes | `cv_pob` **r = 1.000** (100 % identical); `asoc_km2` **r = 0.999** (99.3 %). The results chapter recomputed with them gives the same figures and the same 144 and 188 pairs |
 | 2 | Spatial block validation — no `GroupKFold` anywhere in the project | **0.829** and **0.821** vs 0.826 and 0.822 |
 | 3 | Common support region of Figure 7.1 — the cell uses `pt/pc/lo/hi`, which nothing defines | **[0.026, 0.528]**, 2 and 20 off support. Exact |
-| 4 | §7.5 correlations, tourism-controlled estimates, Table 7.1 "SMD before" | **15 of 15 exact** |
+| 4 | Tourism correlations, tourism-controlled estimates, "SMD before" column | **15 of 15 exact** |
 | 5 | External drive graph for step 06 | Regenerated, **r = 0.945**. `centralidad_h3.csv` ships, so the chain runs |
 
 Two caveats worth carrying into the defence.
@@ -163,13 +168,13 @@ matched ones by ±0.9 to ±1.4:
 |---|---|---|---|
 | Total (RF) | +9.8 % ± 0.05 | +7.4 % ± 0.86, range [+5.9, +8.9] | +6.0 % |
 | Demographic | +14.3 % ± 0.04 | +11.3 % ± 1.42, range [+9.0, +14.8] | +8.1 % |
-| Unsupervised index | −2.4 % ± 0.04 | −2.5 % ± 0.71, range [−3.7, −1.2] | −3.4 % |
+| Unsupervised index | −1.8 % ± 0.03 | −2.3 % ± 0.71, range [−3.6, −1.1] | −3.5 % |
 
 1:1 matching without replacement is greedy, so a small perturbation in one covariate reorders the
 pairs. The sign of the reversal holds in all 25 draws, but the robust figure is the OLS one.
 Matching with replacement, or k > 1 neighbours, would cut this sensitivity.
 
-Also worth stating in the text: the six tourism-controlled figures of §7.5 (+1.4 %, +2.0 %,
+Also worth stating in the text: the six tourism-controlled figures of §8.4 (+1.4 %, +2.0 %,
 +6.7 %, +5.1 %, −3.2 %, +3.8 %) are the **matched** estimates, not OLS; the OLS equivalents are
 +2.4 %, +10.2 % and +5.8 %.
 
@@ -200,5 +205,5 @@ Wikidata CC0). The thesis PDF is the author's and is not MIT-licensed.
 
 ## Citation
 
-> Fernández-Uribarri Poveda, Á. (2026). *Urban morphology and neighbourhood vitality: a
-> two-instrument test on Madrid's H3 grid*. Master's thesis, QuEA.
+> Fernández-Uribarri Poveda, Á. (2026). *Urban form and neighbourhood vitality in Madrid:
+> separating form from place*. Master's thesis, QuEA.

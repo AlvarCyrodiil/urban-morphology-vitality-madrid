@@ -36,14 +36,14 @@ print(f"\n  published tipologia_rf: {clf.get('Espontáneo', 0)} spontaneous / "
       f"{clf.get('Transición', 0)} transitional / {clf.get('Planificado', 0)} planned"
       "   (expected 237 / 133 / 1284)")
 
-print("\n\n=== PART II - effect on vitality (chapter 7) ===\n")
+print("\n\n=== PART II - effect on vitality (results chapter) ===\n")
 
 _, _, m = load_vitality()
 for outcome, treatment, name, want_ols, want_att, want_n in [
         ("vitality", "tipologia_rf", "total (RF)", 9.8, 6.0, 144),
         ("vit_commercial", "tipologia_rf", "commercial block", 6.1, 4.4, 144),
         ("vit_demographic", "tipologia_rf", "demographic block", 14.3, 8.1, 144),
-        ("vitality", "tipologia_idx", "total (unsupervised index)", -2.4, -3.4, 185)]:
+        ("vitality", "tipologia_idx", "total (unsupervised index)", -1.8, -3.5, 188)]:
     ols, _, att, _, n, _ = effect(m, outcome, treatment)
     check(f"{name} - OLS", ols, want_ols, 0.6, "{:+7.1f}%")
     check(f"{name} - matched ({n} pairs, expected {want_n})", att, want_att, 0.6, "{:+7.1f}%")
